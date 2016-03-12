@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:int="http://www.springframework.org/schema/integration"
+	xmlns:oxm="http://www.springframework.org/schema/oxm" xmlns:int-xml="http://www.springframework.org/schema/integration/xml"
+	xmlns:int-file="http://www.springframework.org/schema/integration/file"
+	xmlns:int-mail="http://www.springframework.org/schema/integration/mail"
+	xmlns:int-ftp="http://www.springframework.org/schema/integration/ftp"
+	xmlns:int-ws="http://www.springframework.org/schema/integration/ws"
+	 xmlns:task="http://www.springframework.org/schema/task"
+	 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/integration/ftp http://www.springframework.org/schema/integration/ftp/spring-integration-ftp.xsd
+		http://www.springframework.org/schema/integration/ws http://www.springframework.org/schema/integration/ws/spring-integration-ws.xsd
+		http://www.springframework.org/schema/integration/xml http://www.springframework.org/schema/integration/xml/spring-integration-xml.xsd
+		 http://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm.xsd
+		http://www.springframework.org/schema/integration/file http://www.springframework.org/schema/integration/file/spring-integration-file.xsd
+		  http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.0.xsd">
+
+
+	<int:channel id="weatherInputChannel" />
+	<int:channel id="weatherOutputSoapChannel" />
+	<int:channel id="outChannel" />
+	<int:channel id="outputWeatherChannel" />
+	<int:channel id="farenheitToCelciousChannel" />
+	<int:channel id="weatherResponseStringTransformerOutput" />
+	
+	
+	<bean id="myBean" class = "com.marcin.pihome.integration.weather.ScheduledSender"/>
+
+  <task:scheduled-tasks scheduler="myScheduler">
+        <task:scheduled ref="myBean" method="ask" cron="0 5,35 * * * ?"  />
+    </task:scheduled-tasks>
+ 
+    <task:scheduler id="myScheduler"/>
+	
+
+	<int:gateway id="weatherSender" service-interface="com.marcin.pihome.integration.weather.WeatherSender"
+		default-request-channel="weatherInputChannel" default-reply-channel="farenheitToCelciousChannel"
+		default-reply-timeout="3000" />
+		
+	<int-ws:header-enricher id="soapHeaderEnricher"
+		input-channel="weatherInputChannel" output-channel="weatherSoapChannel">
+		<int-ws:soap-action value="http://www.webserviceX.NET/GetWeather" />
+	</int-ws:header-enricher>	
+		
+	<int-ws:outbound-gateway id="wsOutboundGateway"
+		request-channel="weatherSoapChannel" uri="http://www.webservicex.net/globalweather.asmx"
+		marshaller="weatherMarshaller" unmarshaller="weatherUnmarshaller" reply-channel="weatherOutputSoapChannel"
+		message-factory="messageFactory" />
+
+	<bean id="weatherMarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+		<property name="packagesToScan" value="com.marcin.pihome.weather.**" />
+	</bean>
+	<bean id="weatherUnmarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+		<property name="packagesToScan" value="com.marcin.pihome.weather.**" />
+	</bean>
+
+	<bean id="messageFactory" class="org.springframework.ws.soap.saaj.SaajSoapMessageFactory" />
+
+	<int:transformer id="testTransformer" input-channel="weatherOutputSoapChannel"
+		method="transform" output-channel="outChannel" ref="weatherResponseStringTransformer" />
+		
+	<bean id="weatherResponseStringTransformer" class="com.marcin.pihome.integration.weather.WeatherTransformer" scope="prototype" />
+
+	<int-xml:unmarshalling-transformer
+		id="defaultUnmarshaller" input-channel="outChannel" output-channel="farenheitToCelciousChannel"
+		unmarshaller="unmarshallingTransformer" />
+
+	<bean id="unmarshallingTransformer" class="com.marcin.pihome.integration.weather.WeatherUnmarshaller">
+	</bean>
+
+</beans>

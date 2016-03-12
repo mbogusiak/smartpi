@@ -1,0 +1,14 @@
+spring:
+  profiles.active: development
+---
+spring:
+  profiles: development
+
+mongodb:
+  remoteAddress: 192.168.0.13
+
+---
+spring:
+   profiles: production
+mongodb:
+  remoteAddress: 192.168.0.11

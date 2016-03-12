@@ -1,0 +1,67 @@
+{
+  "name": "ng2-bootstrap",
+  "version": "1.0.5",
+  "description": "angular2 bootstrap components",
+  "scripts": {
+    "build": "webpack",
+    "start": "webpack-dev-server",
+    "postinstall": "typings install moment --save;\ntypings install es6-shim --ambient --save;\ntypings install require --ambient --save"
+  },
+  "main": "ng2-bootstrap.js",
+  "typings": "ng2-bootstrap.d.ts",
+  "keywords": [
+    "angular2",
+    "bootstrap",
+    "angularjs",
+    "twitter-bootstrap"
+  ],
+  "author": "Dmitriy Shekhovtsov <valorkin@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/valor-software/ng2-bootstrap.git"
+  },
+  "bugs": {
+    "url": "https://github.com/valor-software/ng2-bootstrap/issues"
+  },
+  "homepage": "https://github.com/valor-software/ng2-bootstrap#readme",
+  "dependencies": {
+    "angular2": "2.0.0-beta.8",
+    "bootstrap": "^3.3.5",
+    "es6-promise": "^3.0.2",
+    "es6-shim": "^0.33.3",
+    "extract-text-webpack-plugin": "^1.0.1",
+    "moment": "^2.11.2",
+    "ng2-bootstrap": "^1.0.4",
+    "ng2-charts": "^1.0.0-beta.0",
+    "reflect-metadata": "0.1.2",
+    "rxjs": "5.0.0-beta.2",
+    "systemjs": "0.19.9",
+    "zone.js": "0.5.15"
+  },
+  "devDependencies": {
+    "copy-webpack-plugin": "^1.1.1",
+    "css-loader": "^0.23.1",
+    "es6-shim": "0.33.3",
+    "es7-reflect-metadata": "1.5.5",
+    "event-stream": "^3.3.2",
+    "grunt": "^0.4.5",
+    "gulp": "^3.9.1",
+    "gulp-concat-css": "^2.2.0",
+    "gulp-inject": "^3.0.0",
+    "gulp-sass": "^2.2.0",
+    "node-sass": "^3.4.2",
+    "path": "^0.12.7",
+    "sass-loader": "^3.1.2",
+    "source-map-loader": "^0.1.5",
+    "ts-loader": "^0.8.0",
+    "tsconfig-lint": "^0.5.0",
+    "tslint": "^3.5.0",
+    "tslint-loader": "^2.1.1",
+    "typescript": "^1.7.5",
+    "typings": "^0.6.3",
+    "url-loader": "^0.5.7",
+    "webpack": "^1.12.11",
+    "webpack-dev-server": "^1.14.1"
+  }
+}
